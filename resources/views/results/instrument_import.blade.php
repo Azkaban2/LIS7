@@ -203,7 +203,7 @@
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         },
         body: JSON.stringify({ machine: machine })
-    });
+    }).catch(error => console.error('Error saving machine:', error));
 
     // Update hidden input field
     document.getElementById('hidden-machine').value = machine;
@@ -215,14 +215,20 @@
             const patientSelect = document.getElementById('patient-name');
             patientSelect.innerHTML = '<option value="">-- Select Patient --</option>';
 
+            if (data.length === 0) {
+                console.warn("No patients found for the selected machine.");
+            }
+
             for (const [id, name] of Object.entries(data)) {
                 const option = document.createElement('option');
                 option.value = id;
                 option.textContent = name;
                 patientSelect.appendChild(option);
             }
-        });
+        })
+        .catch(error => console.error('Error fetching patients:', error));
 });
+
 
     
         // Function to format the date as "Month Day, Year"

@@ -96,59 +96,34 @@
                 @endforeach
             
              <!-- Electrolytes Test Validation Table -->
-            <form action="{{ route('generate-pdf') }}" method="POST" id="validationForm">
-                @csrf
-                @foreach($patientDetails as $key => $value)
-                    <input type="hidden" name="patientDetails[{{ $key }}]" value="{{ $value }}">
-                @endforeach
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="border-b bg-gray-100">
-                            <th class="text-center py-2">Test</th>
-                            <th class="text-center py-2">Result</th>
-                            <th class="text-center py-2">Unit</th>
-                            <th class="text-center py-2">Reference Range</th>
-                            <th class="text-center py-2">Flag</th>
+             <table class="w-full border-collapse">
+                <thead>
+                    <tr class="border-b bg-gray-100">
+                        <th class="text-center py-2">Test</th>
+                        <th class="text-center py-2">Result</th>
+                        <th class="text-center py-2">Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($validatedResults as $index => $result)
+                        <tr class="border-b">
+                            <td class="py-2 text-center">{{ $result['parameter'] }}</td>
+                            <td class="py-2 text-center">
+                                <input type="text" 
+                                    name="validatedResults[{{ $index }}][value]" 
+                                    value="{{ old("validatedResults.$index.value", $result['value']) }}" 
+                                    class="w-full text-center border rounded result-input">
+                            </td>
+                            <td class="py-2 text-center">{{ $result['unit'] }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($validatedResults as $index => $result)
-                            <tr class="border-b">
-                                <td class="py-2 text-center">{{ $result['parameter'] }}</td>
-                                <td class="py-2 text-center">
-                                    <input type="text" 
-                                        name="validatedResults[{{ $index }}][value]" 
-                                        value="{{ $result['value'] }}" 
-                                        class="w-full text-center border rounded result-input"
-                                        data-index="{{ $index }}"
-                                        data-parameter="{{ $result['parameter'] }}"
-                                        data-range="{{ $result['range'] }}"
-                                        data-unit="{{ $result['unit'] }}"
-                                        data-gender="{{ strtolower($patientDetails['gender']) }}">
-                                </td>
-                                <td class="py-2 text-center">{{ $result['unit'] }}</td>
-                                <td class="py-2 text-center">
-                                    {{-- Fix duplicate Male: Male & Female: Female --}}
-                                    @if(strpos($result['range'], 'Male') !== false && strpos($result['range'], 'Female') !== false)
-                                        {{ str_replace(['Male:', 'Female:'], ['Male', 'Female'], $result['range']) }}
-                                    @else
-                                        {{ $result['range'] }}
-                                    @endif
-                                </td>
-                                <td class="py-2 text-center">
-                                    <span class="flag-indicator {{ $result['flag'] == '✔️' ? 'text-green-500' : 'text-red-500' }}">
-                                        {{ $result['flag'] }}
-                                    </span>
-                                </td>
-                            </tr>
-                
-                            {{-- Hidden Inputs for Form Submission --}}
-                            <input type="hidden" name="validatedResults[{{ $index }}][parameter]" value="{{ $result['parameter'] }}">
-                            <input type="hidden" name="validatedResults[{{ $index }}][unit]" value="{{ $result['unit'] }}">
-                            <input type="hidden" name="validatedResults[{{ $index }}][range]" value="{{ $result['range'] }}">
-                        @endforeach
-                    </tbody>
-                </table>
+            
+                        {{-- Hidden Inputs to Maintain Data Integrity --}}
+                        <input type="hidden" name="validatedResults[{{ $index }}][parameter]" value="{{ $result['parameter'] }}">
+                        <input type="hidden" name="validatedResults[{{ $index }}][unit]" value="{{ $result['unit'] }}">
+                    @endforeach
+                </tbody>                    
+            </table>
+            
                 
 
                 <div class="mt-4">

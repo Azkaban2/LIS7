@@ -28,6 +28,7 @@ class ResultController extends Controller
             'machine_3' => 'Clinical Chemistry',
             'machine_4' => 'Serology',
             'machine_5' => 'Clinical Microscopy',
+            'machine_6' => 'ICE - ElectroCardioGram (ECG)',
         ];
 
         $program = $machineProgramMapping[$request->machine] ?? null;
@@ -129,6 +130,7 @@ class ResultController extends Controller
             'SERO-T03' => 'results.forms.typhidot',
             'SERO-T04' => 'results.forms.covid19_test',
             'ELEC-T01' => 'results.forms.electrolytes',
+            'PHY-ECG' => 'results.forms.ecg',
             default => 'results.forms.default',
         };
 
@@ -150,7 +152,8 @@ class ResultController extends Controller
         
         // Initialize validatedResults array
         $validatedResults = [];
-    
+
+
         // Special case: Glucose test (CC-T01)
         if ($testCode === 'CC-T01') {
             $validatedResults[] = [
@@ -740,6 +743,25 @@ elseif ($testCode === 'ELEC-T01') {
     }
 }
 
+else if ($testCode === 'PHY-ECG') {
+    $ecgParameters = [
+        'MDC_ECG_LEAD_I' => 'mV',
+        'MDC_ECG_LEAD_II' => 'mV',
+        'MDC_ECG_LEAD_III' => 'mV',
+        'ECG_HEART_RATE' => 'bpm',
+        'ECG_TTHOR_RESP_RATE' => 'breaths/min',
+    ];
+
+    foreach ($ecgParameters as $parameter => $unit) {
+        $validatedResults[] = [
+            'parameter' => $parameter,
+            'value' => $results[$parameter] ?? '',
+            'unit' => $unit,
+        ];
+        
+    }
+}
+
 
 
         // Other test codes (HEMA-T01, CC-T02, ELEC-T01, etc.)
@@ -853,6 +875,7 @@ elseif ($testCode === 'ELEC-T01') {
             'SERO-T03' => 'results.validation.typhidot',
             'SERO-T04' => 'results.validation.covid19_test',
             'ELEC-T01' => 'results.validation.electrolytes',
+            'PHY-ECG' => 'results.validation.ecg',
             default => 'results.validation.default',
         };
     
@@ -991,6 +1014,7 @@ elseif ($testCode === 'ELEC-T01') {
             'SERO-T03' => 'results.validation.pdfs.typhidot_pdf',
             'SERO-T04' => 'results.validation.pdfs.covid19_test_pdf',
             'ELEC-T01' => 'results.validation.pdfs.electrolytes_pdf',
+            'PHY-ECG' => 'results.validation.pdfs.ecg_pdf',
             default => 'results.validation.pdfs.default_pdf',
         };
     }

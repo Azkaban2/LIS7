@@ -241,8 +241,8 @@
                                             <input type="checkbox" name="programs[]" value="Electrolytes" class="mr-2" {{ in_array('Electrolytes', $oldPrograms) ? 'checked' : '' }}> Electrolytes
                                         </label>
                                         <label class="block px-4 py-2 text-sm text-gray-700">
-                                            <input type="checkbox" name="programs[]" value="ElectroCardioGram (ECG)" class="mr-2" {{ in_array('ElectroCardioGram (ECG)', $oldPrograms) ? 'checked' : '' }}> ICE - ElectroCardioGram
-                                        </label>
+                                            <input type="checkbox" name="programs[]" value="ICE - ElectroCardioGram (ECG)" class="mr-2" {{ in_array('ICE - ElectroCardioGram (ECG)', $oldPrograms) ? 'checked' : '' }}> ECG (ElectroCardiogram)
+                                        </label>                                        
                                     </div>
                                 </div>
                             </div>
@@ -533,7 +533,7 @@
             'Thypidot': 'SERO-T03',
             '2019nCoV': 'SERO-T04',
             'Electrolytes': 'ELEC-T01',
-            'ElectroCardioGram (ECG)': 'PHY-ECG'
+            'ElectroCardiogram (ECG)': 'PHY-ECG',
         };
 
         programsDropdown.addEventListener('click', () => {
@@ -585,8 +585,8 @@
             if (selected.includes('Electrolytes')) {
                 options = options.concat(['Electrolytes']);
             }
-            if (selected.includes('Cardiology (ECG)')) {
-                options = options.concat(['ElectroCardioGram (ECG)', '2D Echocardiogram', 'Treadmill Stress Test']);
+            if (selected.includes('ICE - ElectroCardioGram (ECG)')) {
+                options = options.concat(['ElectroCardiogram (ECG)']);
             }
 
             options.forEach(option => {
