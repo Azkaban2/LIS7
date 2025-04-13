@@ -112,7 +112,7 @@
         /* Signature Section Styling */
         .signature-section {
             width: 100%;
-            margin-top: 40px;
+            margin-top: 20px;
             display: table;
         }
 
@@ -127,19 +127,19 @@
         .signature-line {
             border-top: 1px solid black;
             display: block;
-            margin: 5px auto;
+            margin: 3px auto;
             width: 200px;
         }
 
         .footer-text {
             text-align: center;
-            font-size: 5px;
-            color: #555;
-            margin-top: 20px;
+            font-size: 10px;
+            color: #000000;
+            margin-top: 46px;
         }
 
         .footer-text p {
-            margin: 5px 0;
+            margin: 2px 0;
         }
     </style>
 </head>

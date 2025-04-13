@@ -157,6 +157,25 @@ class OrderRequestController extends Controller
         return $patientId;
     }
 
+    public function checkPatientId(Request $request)
+{
+    $patientId = $request->query('patient_id');
+
+    if (!$patientId) {
+        return response()->json(['exists' => false, 'message' => 'Patient ID is required'], 400);
+    }
+
+    $exists = OrderRequest::where('patient_id', $patientId)->exists();
+
+    return response()->json([
+        'exists' => $exists,
+        'message' => $exists ? 'The patient ID has already been taken.' : 'Patient ID is available.'
+    ]);
+}
+    
+
+
+
     private function resolveView($baseView)
     {
         return auth()->user()->usertype === 'admin' ? "admin.{$baseView}" : $baseView;

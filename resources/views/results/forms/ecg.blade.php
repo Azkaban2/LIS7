@@ -14,9 +14,6 @@
             </thead>
             <tbody>
                 @foreach([
-                    'MDC_ECG_LEAD_I' => 'mV', 
-                    'MDC_ECG_LEAD_II' => 'mV', 
-                    'MDC_ECG_LEAD_III' => 'mV', 
                     'ECG_HEART_RATE' => 'bpm', 
                     'ECG_TTHOR_RESP_RATE' => 'breaths/min'
                 ] as $parameter => $unit)

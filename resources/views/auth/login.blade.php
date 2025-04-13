@@ -37,17 +37,27 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
-                        <!-- Email Address -->
-                        <div>
-                            <div class="mt-4">
-                            <x-input-label for="email" :value="__('Email/Username')" />
-                            <div class="relative">
-                            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                            <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                <i class="fas fa-user-md"></i>
+                    <!-- Email Address -->
+                    <div class="mt-4">
+                        <x-input-label for="email" :value="__('Email/Username')" />
+                        <div class="relative">
+                            <x-text-input 
+                                id="email" 
+                                class="block mt-1 w-full pr-10" 
+                                type="email" 
+                                name="email" 
+                                :value="old('email')" 
+                                required 
+                                autofocus 
+                                autocomplete="username" 
+                            />
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <i class="fas fa-user-md text-black"></i>
                             </span>
-                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    </div>
+
 
                         <!-- Password -->
                         <div class="mt-4">

@@ -56,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // New route for checking if a patient exists and retrieving their ID
     Route::get('/check-patient', [OrderRequestController::class, 'checkPatient'])->name('check.patient');
+    Route::get('/check-patient', [OrderRequestController::class, 'checkPatientId'])->name('check.patient');
 });
 
 // Admin Routes
@@ -77,6 +78,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('inventory', InventoryController::class);
+    
 });
 
 // Result Routes

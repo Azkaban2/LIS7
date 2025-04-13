@@ -146,13 +146,17 @@
                         <div class="mb-4">
                             <label for="patient_id" class="block text-sm font-medium text-gray-700">Patient ID</label>
                             <div class="flex space-x-2">
-                                <button type="button" id="generate-patient-id" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">Generate</button>
-                                <input type="text" class="form-input block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none @error('patient_id') @enderror" id="patient_id" name="patient_id" value="{{ old('patient_id') }}">
+                                <button type="button" id="generate-patient-id" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                                    Generate
+                                </button>
+                                <div class="relative flex w-full items-center">
+                                    <input type="text" class="form-input block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none" 
+                                        id="patient_id" name="patient_id" value="{{ old('patient_id') }}">
+                                    <div id="patient_id_error" class="ml-3 text-sm whitespace-nowrap"></div>
+                                </div>
                             </div>
-                            @error('patient_id')
-                                <div class="text-red-500 text-xs mt-1">{{ $message }}</div> 
-                            @enderror
-                        </div>                        
+                        </div>
+                             
                         <div class="mb-4">
                             <label for="birthday" class="block text-sm font-medium text-gray-700">Birthday</label>
                             <input type="date" class="form-input block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none @error('birthday') @enderror" id="birthday" name="birthday" value="{{ old('birthday') }}">
@@ -462,7 +466,7 @@
             pathologistLicNoInput.value = localStorage.getItem('pathologist_lic_no') || '';
         }
 
-        // Handle other fields similarly...
+        // Handle other fields similarly
         document.getElementById('step4_patient_name').value = localStorage.getItem('patient_name') || document.getElementById('step4_patient_name').value;
         document.getElementById('step4_patient_id').value = localStorage.getItem('patient_id') || document.getElementById('step4_patient_id').value;
         document.getElementById('step4_birthday').value = localStorage.getItem('birthday') || document.getElementById('step4_birthday').value;
@@ -491,21 +495,57 @@
 
     let patientIdCounter = 1;
 
-    function generatePatientId() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const datePart = `${year}${month}${day}`;
+function generatePatientId() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const datePart = `${year}${month}${day}`;
 
-        const patientId = `PAT-${datePart}-${String(patientIdCounter).padStart(4, '0')}`;
-        patientIdCounter++;
+    const patientId = `PAT-${datePart}-${String(patientIdCounter).padStart(4, '0')}`;
+    patientIdCounter++;
 
-        document.getElementById('patient_id').value = patientId;
-        localStorage.setItem('patient_id', patientId);
-    }
+    // Set patient ID in the input field
+    const patientIdInput = document.getElementById('patient_id');
+    patientIdInput.value = patientId;
+    localStorage.setItem('patient_id', patientId);
 
-    document.getElementById('generate-patient-id').addEventListener('click', generatePatientId);
+    // Immediately validate the patient ID
+    checkPatientId(patientId);
+}
+
+// Event listener for the Generate button
+document.getElementById('generate-patient-id').addEventListener('click', generatePatientId);
+
+// Event listener for manual input validation
+document.getElementById('patient_id').addEventListener('input', function() {
+    checkPatientId(this.value);
+});
+
+// Function to Check if Patient ID Exists in Database
+function checkPatientId(patientId) {
+    if (!patientId) return; 
+
+    fetch(`/check-patient?patient_id=${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+            const errorField = document.getElementById('patient_id_error');
+
+            if (data.exists) {
+                errorField.innerHTML = `
+                    <span style="color: red; font-weight: bold;">
+                        <strong>✖ Patient ID has already been taken.</strong>
+                    </span>`;
+            } else {
+                errorField.innerHTML = `
+                    <span style="color: green; font-weight: bold;">
+                        <strong>✔  Patient ID is available.</strong>
+                    </span>`;
+            }
+        })
+        .catch(error => console.error('Error checking patient ID:', error));
+}
+
 
     document.addEventListener('DOMContentLoaded', function() {
         const programsDropdown = document.getElementById('programsDropdown');

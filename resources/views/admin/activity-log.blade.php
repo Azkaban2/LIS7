@@ -43,7 +43,7 @@
         {{-- end: Sidebar --}}
 
    {{-- Activity Logs Table --}}
-   <div class="bg-white shadow-lg rounded-lg p-6">
+   <div class="bg-white shadow-lg rounded-lg p-6 mr-5">
     <div class="mb-4 flex justify-between items-center">
         <div>
             <h2 class="text-lg font-semibold">Activity Logs Table</h2>

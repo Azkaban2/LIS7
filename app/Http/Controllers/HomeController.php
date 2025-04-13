@@ -15,21 +15,40 @@ class HomeController extends Controller
         $orderCount = OrderRequest::count();
         $resultCount = Result::count();
 
-        // Program-specific counts
-        $programCounts = [
-            'Hematology' => OrderRequest::where('programs', 'like', '%Hematology%')->count(),
-            'Clinical Microscopy' => OrderRequest::where('programs', 'like', '%Clinical Microscopy%')->count(),
-            'Clinical Chemistry' => OrderRequest::where('programs', 'like', '%Clinical Chemistry%')->count(),
-            'Serology' => OrderRequest::where('programs', 'like', '%Serology%')->count(),
-            'Electrolytes' => OrderRequest::where('programs', 'like', '%Electrolytes%')->count(),
-        ];
+        // Compute Turnaround Time (TAT) correctly (Order Creation -> PDF Generation)
+        $tatValues = Result::whereNotNull('pdf_file') // Ensures only completed results
+            ->join('order_requests', 'results.order_request_id', '=', 'order_requests.id')
+            ->selectRaw("TIMESTAMPDIFF(MINUTE, order_requests.created_at, results.created_at) as tat_minutes")
+            ->pluck('tat_minutes');
 
-        // Gender distribution
+        // Compute TAT Metrics (Convert to Hours)
+        $averageTAT = $tatValues->avg() ? round($tatValues->avg() / 60, 2) : 0; // Mean in hours
+        $medianTAT = $tatValues->median() ? round($tatValues->median() / 60, 2) : 0; // Median in hours
+
+        // Percentage of Tests Completed Within 24 Hours (1440 minutes)
+        $tatWithin24Hours = $tatValues->filter(fn($value) => $value <= 1440)->count();
+        $totalTests = $tatValues->count();
+        $tatCompliancePercentage = ($totalTests > 0) ? round(($tatWithin24Hours / $totalTests) * 100, 2) : 0;
+
+        // Convert Average TAT to Percentage (Assuming 48 hours = 100%)
+        $averageTATPercentage = ($averageTAT > 0) ? round(($averageTAT / 48) * 100, 2) : 0;
+
+        // Program-specific counts
+        $programCounts = OrderRequest::selectRaw("
+            SUM(CASE WHEN programs LIKE '%Hematology%' THEN 1 ELSE 0 END) AS Hematology,
+            SUM(CASE WHEN programs LIKE '%Clinical Microscopy%' THEN 1 ELSE 0 END) AS Clinical_Microscopy,
+            SUM(CASE WHEN programs LIKE '%Clinical Chemistry%' THEN 1 ELSE 0 END) AS Clinical_Chemistry,
+            SUM(CASE WHEN programs LIKE '%Serology%' THEN 1 ELSE 0 END) AS Serology,
+            SUM(CASE WHEN programs LIKE '%Electrolytes%' THEN 1 ELSE 0 END) AS Electrolytes,
+            SUM(CASE WHEN programs LIKE '%ICE - ElectroCardioGram (ECG)%' THEN 1 ELSE 0 END) AS ECG
+        ")->first()->toArray();
+
+        // Gender Distribution
         $genderCounts = OrderRequest::selectRaw('gender, COUNT(*) as count')
             ->groupBy('gender')
             ->pluck('count', 'gender');
 
-        // Age distribution
+        // Age Distribution
         $ageCounts = OrderRequest::selectRaw("
             CASE
                 WHEN age BETWEEN 0 AND 18 THEN '0-18'
@@ -41,28 +60,20 @@ class HomeController extends Controller
         ->groupBy('age_range')
         ->pluck('count', 'age_range');
 
-        // Check user type
+        //  Check User Type
         $userType = Auth::user()->usertype;
 
-        if ($userType === 'admin') {
-            // Admin dashboard view
-            return view('admin.dashboard', compact(
-                'orderCount',
-                'resultCount',
-                'programCounts',
-                'genderCounts',
-                'ageCounts'
-            ));
-        } else {
-            // Regular user dashboard view
-            return view('dashboard', compact(
-                'orderCount',
-                'resultCount',
-                'programCounts',
-                'genderCounts',
-                'ageCounts'
-            ));
-        }
+        //  Return Dashboard View with Data
+        return view($userType === 'admin' ? 'admin.dashboard' : 'dashboard', compact(
+            'orderCount',
+            'resultCount',
+            'programCounts',
+            'genderCounts',
+            'ageCounts',
+            'averageTAT',
+            'medianTAT',
+            'tatCompliancePercentage',
+            'averageTATPercentage'
+        ));
     }
 }
-

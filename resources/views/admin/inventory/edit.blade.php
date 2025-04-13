@@ -46,8 +46,24 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex justify-center items-center min-h-screen bg-gray-100">
-        <div class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6">
+        <div class="w-full max-w-2xl bg-sky-300 shadow-xl rounded-lg p-6 mx-auto mr-80">
+
             <h1 class="text-3xl font-semibold text-blue-700 mb-6 text-center">Edit Equipment</h1>
+
+            <!-- Equipment Card -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md mb-6 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="w-24 h-24 border rounded-lg overflow-hidden">
+                        @if($inventory->image)
+                            <img id="imagePreview" src="{{ asset('uploads/inventory/' . $inventory->image) }}" class="w-full h-full object-cover">
+                        @else
+                            <img id="imagePreview" class="hidden w-full h-full object-cover">
+                        @endif
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-800 mt-2">{{ $inventory->name }}</h2>
+                    <p class="text-gray-600">Category: <span id="selectedCategory">{{ $inventory->category }}</span></p>
+                </div>
+            </div>
 
             <!-- Form Container -->
             <form action="{{ route('inventory.update', $inventory->id) }}" method="POST" enctype="multipart/form-data">
@@ -62,11 +78,18 @@
                     @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Category -->
+                <!-- Category Dropdown -->
                 <div class="mb-4">
                     <label class="block font-semibold text-gray-700">Category</label>
-                    <input type="text" name="category" value="{{ old('category', $inventory->category) }}" 
-                           class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                    <select name="category" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                            onchange="updateCategory(this)">
+                        <option value="Hematology" {{ $inventory->category == 'Hematology' ? 'selected' : '' }}>Hematology</option>
+                        <option value="Clinical Microscopy" {{ $inventory->category == 'Clinical Microscopy' ? 'selected' : '' }}>Clinical Microscopy</option>
+                        <option value="Clinical Chemistry" {{ $inventory->category == 'Clinical Chemistry' ? 'selected' : '' }}>Clinical Chemistry</option>
+                        <option value="Serology" {{ $inventory->category == 'Serology' ? 'selected' : '' }}>Serology</option>
+                        <option value="Electrolytes" {{ $inventory->category == 'Electrolytes' ? 'selected' : '' }}>Electrolytes</option>
+                        <option value="Others" {{ $inventory->category == 'Others' ? 'selected' : '' }}>Others</option>
+                    </select>
                     @error('category') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
 
@@ -87,23 +110,6 @@
                     </div>
                 </div>
 
-                <!-- Image Upload -->
-                <div class="mb-4">
-                    <label class="block font-semibold text-gray-700">Image</label>
-                    <input type="file" name="image" id="imageUpload" class="w-full border border-gray-300 px-4 py-2 rounded-lg" onchange="previewImage(event)">
-                    @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Image Preview -->
-                <div class="mb-4 flex justify-center">
-                    @if($inventory->image)
-                        <img id="imagePreview" src="{{ asset('uploads/inventory/' . $inventory->image) }}" 
-                             class="w-40 h-40 object-cover border rounded-lg shadow-md">
-                    @else
-                        <img id="imagePreview" class="hidden w-40 h-40 object-cover border rounded-lg shadow-md">
-                    @endif
-                </div>
-
                 <!-- Submit Button -->
                 <div class="flex justify-between">
                     <a href="{{ route('inventory.index') }}" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-all">
@@ -119,15 +125,9 @@
 </div>
 
 <script>
-    function previewImage(event) {
-        let reader = new FileReader();
-        reader.onload = function(){
-            let output = document.getElementById('imagePreview');
-            output.src = reader.result;
-            output.classList.remove('hidden');
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
+function updateCategory(select) {
+    document.getElementById('selectedCategory').innerText = select.value;
+}
 </script>
 
 @endsection

@@ -29,6 +29,7 @@ class OrderRequest extends Model
         'pathologist_full_name',
         'pathologist_lic_no',
         'physician_full_name',
+        'tat_minutes',
     ];
 
     protected $casts = [

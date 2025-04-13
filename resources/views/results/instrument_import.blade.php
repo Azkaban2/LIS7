@@ -115,8 +115,7 @@
                         </select>
                     </div>
                     <div class="flex items-center mb-4">
-                        <button id="manual-btn" class="bg-blue-500 text-white px-4 py-2 rounded mr-2" @click="tab = 'manual-input'">Manual</button>
-                        <button id="automatic-btn"class="bg-blue-500 text-white px-4 py-2 rounded" @click.prevent="tab = 'manual-input'; loadAutomaticData()">Automatic</button>
+                        <button id="manual-btn" class="bg-blue-500 text-white px-4 py-2 rounded mr-2" @click="tab = 'manual-input'">Proceed</button>
                     </div>
                 </div>
 
@@ -283,57 +282,6 @@ document.getElementById('patient-name').addEventListener('change', function() {
         .catch(error => console.error('Error fetching patient details:', error));
 });
 
-function loadAutomaticData() {
-    fetch('/load-automatic-data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        },
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error('Error:', data.error);
-                alert('Failed to load automatic data: ' + data.error);
-                return;
-            }
-
-            // Populate patient details dynamically
-            document.getElementById('patient-name-display').textContent = data.patient_name || '';
-            document.getElementById('patient-id-display').textContent = data.patient_id || '';
-            document.getElementById('patient-gender-display').textContent = data.gender || '';
-            document.getElementById('patient-age-display').textContent = data.age !== null ? data.age : '';
-            document.getElementById('patient-birthday-display').textContent = formatDate(data.birthday) || '';
-            document.getElementById('patient-program-display').textContent = data.test_program || '';
-            document.getElementById('patient-tests-display').textContent = data.tests_ordered || '';
-            document.getElementById('sample_type-display').textContent = data.sample_type || '';
-            document.getElementById('patient-testcode-display').textContent = data.test_code || '';
-            document.getElementById('patient-date_performed-display').textContent = formatDate(data.date_performed) || '';
-            document.getElementById('patient-date_released-display').textContent = formatDate(data.date_released) || '';
-            document.getElementById('physician-display').textContent = data.physician_full_name || '';
-
-            // Update hidden inputs for form submission
-            document.getElementById('hidden-patient-name').value = data.patient_name || '';
-            document.getElementById('hidden-patient-id').value = data.patient_id || '';
-            document.getElementById('hidden-gender').value = data.gender || '';
-            document.getElementById('hidden-age').value = data.age !== null ? data.age : '';
-            document.getElementById('hidden-birthday').value = data.birthday || '';
-            document.getElementById('hidden-test-program').value = data.test_program || '';
-            document.getElementById('hidden-tests-ordered').value = data.tests_ordered || '';
-            document.getElementById('hidden-sample-type').value = data.sample_type || '';
-            document.getElementById('hidden-test-code').value = data.test_code || '';
-            document.getElementById('hidden-date-performed').value = data.date_performed || '';
-            document.getElementById('hidden-date-released').value = data.date_released || '';
-            document.getElementById('hidden-physician').value = data.physician_full_name || '';
-
-            document.getElementById('hidden-medtech-full-name').value = data.medtech_full_name || '';
-            document.getElementById('hidden-medtech-lic-no').value = data.medtech_lic_no || '';
-            document.getElementById('hidden-pathologist-full-name').value = data.pathologist_full_name || '';
-            document.getElementById('hidden-pathologist-lic-no').value = data.pathologist_lic_no || '';
-        })
-        .catch(error => console.error('Error:', error));
-}
 
 
 

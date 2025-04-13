@@ -198,6 +198,11 @@
         </table>
     </div>
 
+    <div class="remarks-section">
+        <h4>Remarks:</h4>
+        <p>{{ $remarks }}</p>
+    </div>
+
     <!-- Signature Section -->
     <div class="signature-section">
         <div class="left-signature">

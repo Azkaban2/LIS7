@@ -208,6 +208,11 @@
                             <label class="block px-4 py-2 text-sm text-gray-700">
                                 <input type="checkbox" name="programs[]" value="Electrolytes" class="mr-2" {{ in_array('Electrolytes', $oldPrograms) ? 'checked' : '' }}> Electrolytes
                             </label>
+                            <label class="block px-4 py-2 text-sm text-gray-700">
+                                <input type="checkbox" name="programs[]" value="ICE - ElectroCardioGram (ECG)" 
+                                class="mr-2" {{ in_array('ICE - ElectroCardioGram (ECG)', $oldPrograms) ? 'checked' : '' }}> 
+                                ECG (ElectroCardiogram)
+                            </label>                            
                         </div>
                     </div>
                 </div>
@@ -493,6 +498,11 @@
             if (selected.includes('Electrolytes')) {
                 options = options.concat(['Electrolytes']);
             }
+            if (selected.includes('ICE - ElectroCardioGram (ECG)')) {
+                 options = options.concat(['ElectroCardiogram (ECG)']);
+            }
+
+        
 
             const oldOrders = {!! json_encode(old('order', $orderRequest->order ?? [])) !!};
             options.forEach(option => {

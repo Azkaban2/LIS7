@@ -18,7 +18,6 @@
             <img src="{{ asset('logo/eagles.png') }}" class="h-15 w-20" alt="Eagles Logo">
             <span class="text-lg font-bold text-white ml-3">Laboratory Information System</span>
         </a>
-
         <ul class="mt-4">
             <li class="mb-1 group active">
                 <a href="{{ route('dashboard') }}" class="flex items-center py-2 px-4 text-white hover:bg-green-700 hover:text-gray-100 rounded-md group-[.active]:bg-red-600 group-[.active]:text-white group-[.selected]:bg-gray-950 group-[.selected]:text-gray-100">
@@ -105,6 +104,15 @@
                         </a>
                     </div>
 
+                      <!-- Average Turnaround Time -->
+                  <div class="bg-sky-500 shadow-md p-6 rounded-lg">
+                    <h2 class="text-white text-sm uppercase font-semibold">Turnaround Time (TAT)</h2>
+                    <p class="text-2xl font-bold text-white">Avg: {{ round($averageTAT, 2) ?? 0 }} hrs</p>
+                    <p class="text-2xl font-bold text-white">Median: {{ round($medianTAT, 2) ?? 0 }} hrs</p>
+                    <p class="text-xl text-green-200 font-semibold">Completed in 24hrs: {{ $tatCompliancePercentage }}%</p>
+                    <p class="text-xl text-yellow-200 font-semibold">Efficiency: {{ round($averageTATPercentage, 2) ?? 0 }}%</p>
+               </div>
+
                     <!-- Program Counts -->
                     @foreach ($programCounts as $program => $count)
                         <div class="bg-sky-500 text-white p-6 rounded-lg shadow-md">
@@ -120,6 +128,7 @@
                                         'Clinical Chemistry' => 'ri-flask-line',
                                         'Serology' => 'ri-virus-line',
                                         'Electrolytes' => 'ri-water-flash-line',
+                                        'ECG' => 'ri-heart-pulse-line'
                                     ];
                                     $icon = $icons[$program] ?? 'ri-stack-line';
                                 @endphp
@@ -128,18 +137,24 @@
                         </div>
                     @endforeach
                 </div>
+                
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-8">
                     <!-- Gender Distribution Chart -->
                     <div class="bg-sky-300 shadow-md rounded-lg p-4">
                         <h2 class="text-lg font-semibold mb-4 text-center">Gender Distribution</h2>
-                        <canvas id="genderChart" style="width: 300px; height: 300px;"></canvas>
+                        <div class="w-48 h-48 mx-auto">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                        
                     </div>
                 
                     <!-- Age Distribution Chart -->
                     <div class="bg-sky-300 shadow-md rounded-lg p-4">
                         <h2 class="text-lg font-semibold mb-4 text-center">Age Distribution</h2>
-                        <canvas id="ageChart" style="width: 300px; height: 300px;"></canvas>
+                        <div class="w-48 h-48 mx-auto flex items-center justify-center">
+                            <canvas id="ageChart"></canvas>
+                        </div>                        
                     </div>
                 </div>                
             </div>
@@ -199,3 +214,4 @@
         }
     });
 </script>
+

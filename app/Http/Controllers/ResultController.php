@@ -745,9 +745,6 @@ elseif ($testCode === 'ELEC-T01') {
 
 else if ($testCode === 'PHY-ECG') {
     $ecgParameters = [
-        'MDC_ECG_LEAD_I' => 'mV',
-        'MDC_ECG_LEAD_II' => 'mV',
-        'MDC_ECG_LEAD_III' => 'mV',
         'ECG_HEART_RATE' => 'bpm',
         'ECG_TTHOR_RESP_RATE' => 'breaths/min',
     ];
@@ -906,6 +903,10 @@ else if ($testCode === 'PHY-ECG') {
         if (!$orderRequest) {
             return back()->with('error', 'Order request not found for the given patient.');
         }
+
+         // Compute Turnaround Time (TAT)
+        $tatMinutes = $orderRequest->created_at->diffInMinutes(now());
+        $orderRequest->update(['date_released' => now(), 'tat_minutes' => $tatMinutes]); // Store TAT
 
         // Generate PDF
         $pdfTemplate = $this->resolvePdfTemplate($patientDetails['test_code']);
